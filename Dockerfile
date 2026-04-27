@@ -16,11 +16,12 @@ RUN python manage.py collectstatic --noinput --settings=onlinexam.settings.produ
 
 EXPOSE 8000
 
-CMD ["gunicorn", "onlinexam.wsgi:application", \
-     "--bind", "0.0.0.0:8000", \
-     "--workers", "4", \
-     "--threads", "2", \
-     "--worker-class", "gthread", \
-     "--timeout", "120", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-"]
+CMD python manage.py migrate --settings=onlinexam.settings.production && \
+    gunicorn onlinexam.wsgi:application \
+    --bind 0.0.0.0:8000 \
+    --workers 4 \
+    --threads 2 \
+    --worker-class gthread \
+    --timeout 120 \
+    --access-logfile - \
+    --error-logfile -
