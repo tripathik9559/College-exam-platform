@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Face Snapshots – {{ student.get_name }}{% endblock %}
+{% block sidebar %}{% include 'teacher/teacher_sidebar.html' %}{% endblock %}
+{% block page_title %}📸 Face Snapshots — {{ student.get_name }}{% endblock %}
+{% block content %}
+
+<div class="mb-4">
+  <a href="{% url 'teacher-proctoring-snapshots' %}" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-sm">← Back to Proctoring Overview</a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+  <!-- Login Verification Photo -->
+  <div class="card">
+    <h2 class="font-bold text-gray-700 mb-3 flex items-center gap-2">🔒 Login Verification Photo</h2>
+    {% if login_snaps %}
+      {% with login_snaps.0 as snap %}
+      <div class="relative rounded-xl overflow-hidden border-2 border-green-400" style="aspect-ratio:4/3;background:#0f172a;">
+        <img src="{{ snap.image.url }}" alt="Login photo" class="w-full h-full object-cover"/>
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-3 py-2 flex items-center justify-between">
+          <span>✅ Captured at login</span>
+          <span>{{ snap.captured_at|date:"d M Y H:i" }}</span>
+        </div>
+      </div>
+      {% if login_snaps|length > 1 %}
+      <p class="text-xs text-gray-400 mt-2">{{ login_snaps|length }} login photos total (showing latest)</p>
+      {% endif %}
+      {% endwith %}
+    {% else %}
+      <div class="rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 text-sm" style="aspect-ratio:4/3;">
+        No login photo captured yet.
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Latest Exam Snapshot -->
+  <div class="card">
+    <h2 class="font-bold text-gray-700 mb-3 flex items-center gap-2">📷 Latest Exam Snapshot</h2>
+    {% if exam_snaps %}
+      {% with exam_snaps.0 as snap %}
+      <div class="relative rounded-xl overflow-hidden border-2 border-blue-400" style="aspect-ratio:4/3;background:#0f172a;">
+        <img src="{{ snap.image.url }}" alt="Exam snapshot" class="w-full h-full object-cover"/>
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-3 py-2 flex items-center justify-between">
+          <span>{{ snap.session.course.course_name|default:"Exam" }}</span>
+          <span>{{ snap.captured_at|date:"d M Y H:i:s" }}</span>
+        </div>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">{{ exam_snaps|length }} exam snapshots total</p>
+      {% endwith %}
+    {% else %}
+      <div class="rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 text-sm" style="aspect-ratio:4/3;">
+        No exam snapshots yet.
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- All Exam Snapshots Table -->
+{% if exam_snaps %}
+<div class="card overflow-x-auto">
+  <h2 class="font-bold text-gray-700 mb-4">All Exam Snapshots ({{ exam_snaps|length }})</h2>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+    {% for snap in exam_snaps %}
+    <div class="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm" style="aspect-ratio:4/3;background:#0f172a;">
+      <img src="{{ snap.image.url }}" alt="Snapshot {{ forloop.counter }}" class="w-full h-full object-cover"/>
+      <div class="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs px-1.5 py-1 text-center">
+        {{ snap.captured_at|date:"H:i:s" }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

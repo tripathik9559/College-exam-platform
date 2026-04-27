@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% block title %}Result Analysis{% endblock %}
+{% block sidebar %}{% include 'student/student_sidebar.html' %}{% endblock %}
+{% block page_title %}📊 Result Analysis{% endblock %}
+{% block content %}
+
+{% if not results %}
+<div class="card text-center py-16 text-gray-400">
+  <p class="text-4xl mb-3">📋</p>
+  <p class="text-lg font-medium">No results yet.</p>
+  <p class="text-sm mt-1"><a href="{% url 'student-exam' %}" class="text-blue-600 hover:underline">Take an exam</a> to see your analysis.</p>
+</div>
+{% else %}
+
+<!-- Subject-wise performance chart -->
+<div class="card mb-6">
+  <h2 class="font-bold text-gray-700 mb-4">📈 Subject-wise Average Score</h2>
+  <div style="position:relative;height:260px;">
+    <canvas id="subjectChart"></canvas>
+  </div>
+</div>
+
+<!-- Previous attempt comparison -->
+<div class="card">
+  <h2 class="font-bold text-gray-700 mb-4">🔁 Attempt-wise Comparison</h2>
+  {% for exam_name, attempts in exam_attempts.items %}
+  <div class="mb-6 {% if not forloop.last %}pb-6 border-b border-gray-100{% endif %}">
+    <h3 class="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+      📝 {{ exam_name }}
+      <span class="text-xs text-gray-400 font-normal">{{ attempts|length }} attempt{{ attempts|length|pluralize }}</span>
+    </h3>
+    <div class="flex gap-3 flex-wrap">
+      {% for a in attempts %}
+      <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 min-w-[110px] text-center">
+        <p class="text-xs text-gray-400 mb-1">{{ a.date }}</p>
+        <p class="text-2xl font-bold {% if a.grade == 'A+' or a.grade == 'A' %}text-green-600{% elif a.grade == 'B' %}text-blue-600{% elif a.grade == 'F' %}text-red-500{% else %}text-amber-500{% endif %}">
+          {{ a.grade }}
+        </p>
+        <p class="text-sm font-semibold text-gray-700 mt-1">{{ a.marks }}/{{ a.total }}</p>
+        <p class="text-xs text-gray-400">{{ a.pct }}%</p>
+        {% if forloop.counter > 1 %}
+          {% with prev=attempts|slice:":forloop.counter0"|last %}
+          {% if prev %}
+            {% if a.pct > prev.pct %}
+            <p class="text-xs text-green-600 mt-1">▲ +{{ a.pct|floatformat:1 }}</p>
+            {% elif a.pct < prev.pct %}
+            <p class="text-xs text-red-500 mt-1">▼</p>
+            {% endif %}
+          {% endif %}
+          {% endwith %}
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Mini trend bar -->
+    {% if attempts|length > 1 %}
+    <div class="mt-3 flex items-end gap-1 h-10">
+      {% for a in attempts %}
+      <div class="flex-1 rounded-t transition-all"
+        style="height:{{ a.pct }}%;max-height:40px;min-height:4px;
+          background:{% if a.pct >= 75 %}#4ade80{% elif a.pct >= 45 %}#60a5fa{% else %}#f87171{% endif %};"
+        title="{{ a.date }}: {{ a.pct }}%">
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+const labels = {{ chart_labels|safe }};
+const scores = {{ chart_scores|safe }};
+
+const colors = scores.map(s =>
+  s >= 75 ? '#4ade80' : s >= 45 ? '#60a5fa' : '#f87171'
+);
+
+new Chart(document.getElementById('subjectChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Average %',
+      data: scores,
+      backgroundColor: colors,
+      borderRadius: 8,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.raw}%`
+        }
+      }
+    },
+    scales: {
+      y: {
+        min: 0, max: 100,
+        ticks: { callback: v => v + '%' },
+        grid: { color: '#f3f4f6' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Exam Schedule{% endblock %}
+{% block sidebar %}{% include 'student/student_sidebar.html' %}{% endblock %}
+{% block page_title %}🗓️ Exam Schedule{% endblock %}
+{% block content %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+{% for c in courses %}
+{% with open=c.is_currently_open %}
+<div class="card border-l-4 {% if open %}border-l-green-400{% elif c.start_time and c.start_time > now %}border-l-blue-400{% else %}border-l-gray-300{% endif %}">
+  <div class="flex justify-between items-start mb-3">
+    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-xl">📝</div>
+    {% if open %}
+      <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">🟢 Open Now</span>
+    {% elif c.start_time and c.start_time > now %}
+      <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">⏳ Upcoming</span>
+    {% else %}
+      <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Closed</span>
+    {% endif %}
+  </div>
+
+  <h3 class="font-bold text-gray-800 mb-1">{{ c.course_name }}</h3>
+  <p class="text-xs text-gray-500 mb-1">📚 {{ c.subject.name|default:"General" }}</p>
+  <p class="text-xs text-gray-500 mb-2">⏱️ {{ c.duration_minutes }} min &nbsp;·&nbsp; ❓ {{ c.question_number }} questions</p>
+
+  {% if c.start_time %}
+  <div class="bg-gray-50 rounded-xl px-3 py-2 mb-3 text-xs">
+    <p class="text-gray-500">🕐 Start: <span class="font-semibold text-gray-700">{{ c.start_time|date:"d M Y, H:i" }}</span></p>
+    {% if c.end_time %}
+    <p class="text-gray-500 mt-0.5">🏁 End: <span class="font-semibold text-gray-700">{{ c.end_time|date:"d M Y, H:i" }}</span></p>
+    {% endif %}
+    {% if c.start_time > now %}
+    <div class="mt-2 pt-2 border-t border-gray-200">
+      <p class="text-blue-600 font-semibold text-center countdown-label" id="cd-label-{{ c.id }}">Starts in</p>
+      <p class="text-blue-700 font-mono font-bold text-lg text-center" id="cd-{{ c.id }}" data-target="{{ c.start_time|date:'c' }}">--:--:--</p>
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <p class="text-xs text-green-600 mb-3 font-medium">✅ No time restriction</p>
+  {% endif %}
+
+  {% if open %}
+  <a href="{% url 'take-exam' c.id %}" class="btn-primary w-full justify-center text-xs py-2 block text-center">Start Exam →</a>
+  {% elif c.start_time and c.start_time > now %}
+  <button disabled class="w-full text-center text-xs py-2 rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed">Not Yet Open</button>
+  {% else %}
+  <button disabled class="w-full text-center text-xs py-2 rounded-xl bg-gray-100 text-gray-400 cursor-not-allowed">Closed</button>
+  {% endif %}
+</div>
+{% endwith %}
+{% empty %}
+<div class="col-span-3 card text-center py-12 text-gray-400">No exams scheduled.</div>
+{% endfor %}
+</div>
+
+<script>
+// Live countdown timers
+document.querySelectorAll('[data-target]').forEach(el => {
+  const examId = el.id.replace('cd-', '');
+  const target = new Date(el.dataset.target);
+
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      el.textContent = '00:00:00';
+      location.reload();
+      return;
+    }
+    const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    el.textContent = `${h}:${m}:${s}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+});
+</script>
+{% endblock %}

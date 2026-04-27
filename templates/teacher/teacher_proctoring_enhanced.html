@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Proctoring – Face Verification{% endblock %}
+{% block sidebar %}{% include 'teacher/teacher_sidebar.html' %}{% endblock %}
+{% block page_title %}🔍 Proctoring — Face Verification{% endblock %}
+{% block content %}
+
+<div class="flex gap-3 mb-6 flex-wrap">
+  <a href="{% url 'teacher-proctoring' %}" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-all">
+    🚨 Alert Logs
+  </a>
+  <span class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+    📸 Face Snapshots
+  </span>
+</div>
+
+{% if student_data %}
+<!-- Student Snapshot Cards -->
+<div class="space-y-4">
+  {% for item in student_data %}
+  <div class="card">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+      <div>
+        <h3 class="font-bold text-gray-800 text-lg">{{ item.student.get_name }}</h3>
+        <p class="text-xs text-gray-400">Roll: {{ item.student.roll_number|default:"—" }} &nbsp;|&nbsp; {{ item.exam_count }} exam snapshot{{ item.exam_count|pluralize }}</p>
+      </div>
+      <a href="{% url 'teacher-student-snapshots' item.student.id %}"
+         class="inline-flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-all">
+        View All Snapshots →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+
+      <!-- Login Photo -->
+      <div>
+        <p class="text-xs font-semibold text-green-700 mb-2 uppercase tracking-wide">🔒 Login Photo</p>
+        {% if item.login_snap %}
+        <div class="relative rounded-xl overflow-hidden border-2 border-green-400" style="aspect-ratio:4/3;background:#0f172a;">
+          <img src="{{ item.login_snap.image.url }}" alt="Login" class="w-full h-full object-cover"/>
+          <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 text-center">
+            {{ item.login_snap.captured_at|date:"d M Y H:i" }}
+          </div>
+        </div>
+        {% else %}
+        <div class="rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs" style="aspect-ratio:4/3;">
+          No login photo
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Latest Exam Snapshot -->
+      <div>
+        <p class="text-xs font-semibold text-blue-700 mb-2 uppercase tracking-wide">📷 Latest Exam Snapshot</p>
+        {% if item.latest_exam_snap %}
+        <div class="relative rounded-xl overflow-hidden border-2 border-blue-400" style="aspect-ratio:4/3;background:#0f172a;">
+          <img src="{{ item.latest_exam_snap.image.url }}" alt="Exam" class="w-full h-full object-cover"/>
+          <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 text-center">
+            {{ item.latest_exam_snap.captured_at|date:"d M Y H:i:s" }}
+          </div>
+        </div>
+        {% else %}
+        <div class="rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs" style="aspect-ratio:4/3;">
+          No exam snapshots yet
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="card text-center py-16 text-gray-400">
+  <p class="text-4xl mb-3">📷</p>
+  <p class="text-lg font-medium">No face snapshots yet.</p>
+  <p class="text-sm mt-1">Snapshots will appear here once students complete identity verification and take exams.</p>
+</div>
+{% endif %}
+
+<!-- Alert Log Section -->
+{% if alerts %}
+<div class="card overflow-x-auto mt-8">
+  <h2 class="font-bold text-gray-700 mb-4">🚨 Recent Proctoring Alerts</h2>
+  <table class="w-full text-sm">
+    <thead><tr class="text-left text-gray-500 border-b">
+      <th class="pb-3">Student</th><th class="pb-3">Alert</th><th class="pb-3">Exam</th><th class="pb-3">Time</th>
+    </tr></thead>
+    <tbody class="divide-y divide-gray-50">
+    {% for a in alerts %}
+    <tr class="hover:bg-gray-50">
+      <td class="py-2.5 font-medium">{{ a.student.get_name }}</td>
+      <td class="py-2.5">
+        <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold
+          {% if a.alert_type == 'no_face' %}bg-red-100 text-red-700
+          {% elif a.alert_type == 'tab_switch' %}bg-orange-100 text-orange-700
+          {% else %}bg-yellow-100 text-yellow-700{% endif %}">
+          {{ a.get_alert_type_display }}
+        </span>
+      </td>
+      <td class="py-2.5 text-gray-500">{{ a.course.course_name|default:"—" }}</td>
+      <td class="py-2.5 text-gray-400">{{ a.timestamp|date:"d M H:i" }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}
