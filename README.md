@@ -1,5 +1,5 @@
 # BBDNIIT Online Examination Platform
-
+https://college-exam-platform-1.onrender.com/
 A **college-grade, AI-proctored online examination system** built with Django 4.2, TailwindCSS, and
 modern web technologies — capable of handling 100–200 concurrent students.
 
