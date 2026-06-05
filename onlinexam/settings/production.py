@@ -12,7 +12,10 @@ DATABASES = {
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
         'CONN_MAX_AGE': 60,
-        'OPTIONS': {'connect_timeout': 10},
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'sslmode': 'require',   # Required for Neon PostgreSQL
+        },
     }
 }
 
@@ -31,20 +34,26 @@ MIDDLEWARE = [
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Console logging (Render streams logs — no file needed)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'file': {
+        'console': {
             'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
+            'class': 'logging.StreamHandler',
         },
     },
     'loggers': {
-        'django': {'handlers': ['file'], 'level': 'ERROR', 'propagate': True},
+        'django': {'handlers': ['console'], 'level': 'ERROR', 'propagate': True},
     },
 }
+
+# DATABASE_URL override — if set on Render, it takes priority over individual DB_* vars
 import dj_database_url
 if os.environ.get('DATABASE_URL'):
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    DATABASES['default'] = dj_database_url.parse(
+        os.environ.get('DATABASE_URL'),
+        conn_max_age=60,
+        ssl_require=True,
+    )

@@ -233,3 +233,146 @@ Recommended: Put **Nginx** in front of Gunicorn as a reverse proxy.
 
 ## 📝 License
 © BBDNIIT — For educational use only.
+
+```
+bbdniit_final
+├─ ARCHITECTURE_IMPROVEMENT.md
+├─ docker-compose.yml
+├─ Dockerfile
+├─ exam
+│  ├─ admin.py
+│  ├─ apps.py
+│  ├─ forms.py
+│  ├─ middleware.py
+│  ├─ migrations
+│  │  ├─ 0001_initial.py
+│  │  ├─ 0002_rename_exam_session_lookup_idx_exam_examse_student_62cad2_idx_and_more.py
+│  │  └─ __init__.py
+│  ├─ models.py
+│  ├─ services
+│  │  ├─ question_parser.py
+│  │  └─ __init__.py
+│  ├─ tests.py
+│  ├─ views.py
+│  └─ __init__.py
+├─ gunicorn.conf.py
+├─ logs
+├─ manage.py
+├─ onlinexam
+│  ├─ settings
+│  │  ├─ base.py
+│  │  ├─ development.py
+│  │  ├─ production.py
+│  │  └─ __init__.py
+│  ├─ urls.py
+│  ├─ wsgi.py
+│  └─ __init__.py
+├─ README.md
+├─ README_SETUP.md
+├─ requirements.txt
+├─ static
+│  ├─ css
+│  │  └─ custom.css
+│  ├─ images
+│  └─ js
+├─ student
+│  ├─ admin.py
+│  ├─ apps.py
+│  ├─ forms.py
+│  ├─ migrations
+│  │  ├─ 0001_initial.py
+│  │  ├─ 0002_studentfacesnapshot.py
+│  │  └─ __init__.py
+│  ├─ models.py
+│  ├─ tests.py
+│  ├─ urls.py
+│  ├─ views.py
+│  └─ __init__.py
+├─ teacher
+│  ├─ admin.py
+│  ├─ apps.py
+│  ├─ forms.py
+│  ├─ migrations
+│  │  ├─ 0001_initial.py
+│  │  └─ __init__.py
+│  ├─ models.py
+│  ├─ tests.py
+│  ├─ urls.py
+│  ├─ views.py
+│  └─ __init__.py
+└─ templates
+   ├─ base.html
+   ├─ exam
+   │  ├─ aboutus.html
+   │  ├─ adminlogin.html
+   │  ├─ admin_add_course.html
+   │  ├─ admin_add_question.html
+   │  ├─ admin_add_subject.html
+   │  ├─ admin_check_marks.html
+   │  ├─ admin_course.html
+   │  ├─ admin_dashboard.html
+   │  ├─ admin_proctoring.html
+   │  ├─ admin_question.html
+   │  ├─ admin_sidebar.html
+   │  ├─ admin_student.html
+   │  ├─ admin_teacher.html
+   │  ├─ admin_view_course.html
+   │  ├─ admin_view_marks.html
+   │  ├─ admin_view_pending_teacher.html
+   │  ├─ admin_view_question.html
+   │  ├─ admin_view_student.html
+   │  ├─ admin_view_student_marks.html
+   │  ├─ admin_view_subject.html
+   │  ├─ admin_view_teacher.html
+   │  ├─ admin_view_teacher_salary.html
+   │  ├─ contactus.html
+   │  ├─ contactussuccess.html
+   │  ├─ index.html
+   │  ├─ logout.html
+   │  ├─ salary_form.html
+   │  ├─ update_student.html
+   │  ├─ update_teacher.html
+   │  └─ view_question.html
+   ├─ student
+   │  ├─ check_marks.html
+   │  ├─ exam_schedule.html
+   │  ├─ face_capture.html
+   │  ├─ result_analysis.html
+   │  ├─ start_exam.html
+   │  ├─ studentclick.html
+   │  ├─ studentlogin.html
+   │  ├─ studentsignup.html
+   │  ├─ student_dashboard.html
+   │  ├─ student_exam.html
+   │  ├─ student_marks.html
+   │  ├─ student_sidebar.html
+   │  ├─ take_exam.html
+   │  └─ view_result.html
+   └─ teacher
+      ├─ see_question.html
+      ├─ teacherclick.html
+      ├─ teacherlogin.html
+      ├─ teachersignup.html
+      ├─ teacher_academic_course.html
+      ├─ teacher_add_academic_course.html
+      ├─ teacher_add_exam.html
+      ├─ teacher_add_question.html
+      ├─ teacher_add_subject.html
+      ├─ teacher_dashboard.html
+      ├─ teacher_edit_exam.html
+      ├─ teacher_exam.html
+      ├─ teacher_live_monitoring.html
+      ├─ teacher_proctoring.html
+      ├─ teacher_proctoring_enhanced.html
+      ├─ teacher_question.html
+      ├─ teacher_sidebar.html
+      ├─ teacher_student_snapshots.html
+      ├─ teacher_subject.html
+      ├─ teacher_upload_answer_key.html
+      ├─ teacher_upload_quiz.html
+      ├─ teacher_view_exam.html
+      ├─ teacher_view_question.html
+      ├─ teacher_view_results.html
+      └─ teacher_wait_for_approval.html
+
+```

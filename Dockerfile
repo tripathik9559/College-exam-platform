@@ -17,7 +17,7 @@ RUN python manage.py collectstatic --noinput --settings=onlinexam.settings.produ
 EXPOSE 8000
 
 CMD python manage.py migrate --settings=onlinexam.settings.production && \
-    python manage.py createsuperuser --noinput --settings=onlinexam.settings.production || true && \
+    python manage.py seed_demo --settings=onlinexam.settings.production && \
     gunicorn onlinexam.wsgi:application \
     --bind 0.0.0.0:8000 \
     --workers 4 \

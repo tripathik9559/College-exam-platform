@@ -4,7 +4,7 @@ django-widget-tweaks>=1.5
 gunicorn>=21.0
 whitenoise>=6.6
 psycopg2-binary>=2.9
-python-dotenv>=1.
+python-dotenv>=1.0.0
 dj-database-url>=2.0
 # Optional — uncomment for PDF/DOCX question import
 # pdfplumber>=0.10
